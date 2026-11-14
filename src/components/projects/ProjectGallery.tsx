@@ -14,8 +14,10 @@ type Props = {
   projectTitle: string;
   projectSlug: string;
   media: ProjectMedia[];
-  /** "phones" muestra capturas de celular lado a lado (tarjetas chicas). */
+  /** "phones" muestra capturas de celular lado a lado. */
   variant?: "carousel" | "phones";
+  /** Tamaño de los celulares en la variante "phones": "lg" agrega el título de cada captura. */
+  phoneSize?: "sm" | "lg";
 };
 
 /**
@@ -24,7 +26,13 @@ type Props = {
  * - Las imágenes se pueden ampliar en un <dialog> nativo (Esc para cerrar).
  * - Si una imagen todavía no tiene `src`, muestra un placeholder.
  */
-export function ProjectGallery({ projectTitle, projectSlug, media, variant = "carousel" }: Props) {
+export function ProjectGallery({
+  projectTitle,
+  projectSlug,
+  media,
+  variant = "carousel",
+  phoneSize = "sm",
+}: Props) {
   const [index, setIndex] = useState(0);
   const [zoomed, setZoomed] = useState<ImageMedia | null>(null);
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -81,23 +89,32 @@ export function ProjectGallery({ projectTitle, projectSlug, media, variant = "ca
   if (variant === "phones") {
     const phones = media.filter((m): m is ImageMedia => m.type === "image").slice(0, 3);
     const tilt = ["-rotate-6 translate-y-6", "z-10 -translate-y-1", "rotate-6 translate-y-6"];
+    const large = phoneSize === "lg";
 
     return (
       <>
-        <ul className="group/phones flex items-start justify-center gap-3 sm:gap-4" aria-label={`Capturas de ${projectTitle}`}>
+        <ul
+          className={cn("group/phones flex items-start justify-center", large ? "gap-4 sm:gap-8" : "gap-3 sm:gap-4")}
+          aria-label={`Capturas de ${projectTitle}`}
+        >
           {phones.map((item, i) => (
             <li
               key={item.caption}
               className={cn(
-                "w-1/3 max-w-[150px] transition-transform duration-500 ease-out group-hover/phones:translate-y-0 group-hover/phones:rotate-0",
+                "w-1/3 transition-transform duration-500 ease-out group-hover/phones:translate-y-0 group-hover/phones:rotate-0",
+                large ? "max-w-50" : "max-w-[150px]",
                 phones.length === 3 ? tilt[i] : "",
               )}
             >
               <PhoneFrame
                 item={item}
                 projectSlug={projectSlug}
+                sizes={large ? "200px" : "150px"}
                 onOpen={() => openLightbox(item)}
               />
+              {large && (
+                <p className="mt-3 text-center font-display text-xs font-semibold sm:text-sm">{item.caption}</p>
+              )}
             </li>
           ))}
         </ul>
@@ -234,10 +251,13 @@ export function ProjectGallery({ projectTitle, projectSlug, media, variant = "ca
 function PhoneFrame({
   item,
   projectSlug,
+  sizes,
   onOpen,
 }: {
   item: ImageMedia;
   projectSlug: string;
+  /** Ancho aproximado del celular, para que Next sirva la imagen del tamaño justo. */
+  sizes: string;
   onOpen: () => void;
 }) {
   const frame =
@@ -253,7 +273,7 @@ function PhoneFrame({
 
   return (
     <button type="button" onClick={onOpen} className={cn(frame, "cursor-zoom-in")}>
-      <Image src={item.src} alt={item.alt} fill sizes="150px" className="object-cover object-top" />
+      <Image src={item.src} alt={item.alt} fill sizes={sizes} className="object-cover object-top" />
       <span className="sr-only">. Ampliar captura</span>
     </button>
   );

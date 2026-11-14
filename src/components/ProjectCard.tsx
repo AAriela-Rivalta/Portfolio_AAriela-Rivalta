@@ -30,6 +30,10 @@ export function ProjectCard({ project, index, variant = "featured", reverse = fa
 function FeaturedCard({ project, index, reverse }: { project: Project; index: number; reverse: boolean }) {
   const titleId = `${project.slug}-titulo`;
   const meta = [project.context, project.year].filter((v) => !isPending(v));
+  // Las capturas de celular se ven mejor lado a lado que en el carrusel horizontal
+  const onlyPhoneShots =
+    project.media.length > 0 &&
+    project.media.every((m) => m.type === "image" && m.orientation === "portrait");
 
   return (
     <article
@@ -54,7 +58,22 @@ function FeaturedCard({ project, index, reverse }: { project: Project; index: nu
           )}
         >
           <div className="lg:sticky lg:top-28">
-            <ProjectGallery projectTitle={project.title} projectSlug={project.slug} media={project.media} />
+            {onlyPhoneShots ? (
+              <div className="relative overflow-hidden rounded-2xl border-2 border-ink bg-primary-soft px-4 pb-14 pt-10 sm:px-8">
+                <div aria-hidden="true" className="bg-dots absolute inset-0 opacity-40" />
+                <div className="relative">
+                  <ProjectGallery
+                    projectTitle={project.title}
+                    projectSlug={project.slug}
+                    media={project.media}
+                    variant="phones"
+                    phoneSize="lg"
+                  />
+                </div>
+              </div>
+            ) : (
+              <ProjectGallery projectTitle={project.title} projectSlug={project.slug} media={project.media} />
+            )}
           </div>
         </div>
 

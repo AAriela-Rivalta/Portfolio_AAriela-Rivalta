@@ -321,27 +321,39 @@ export const projects: Project[] = [
   },
 
   // --------------------------------------------------------------------------
-  // PROYECTOS SECUNDARIOS (tarjetas chicas)
+  // APP MÓVIL
+  // Las capturas son de celular ("portrait"), así que la tarjeta las muestra
+  // lado a lado en lugar del carrusel.
   // --------------------------------------------------------------------------
   {
     slug: "figuritas-mundial-2026",
     title: "Figuritas Mundial 2026",
-    tagline: "App móvil para llevar el álbum del Mundial",
+    tagline: "App móvil para completar el álbum del Mundial sin perder la cuenta",
     category: "App móvil",
-    featured: false,
-    context: "COMPLETAR: contexto (por ejemplo, proyecto personal o en equipo).",
+    featured: true,
+    context: "Proyecto personal",
     // El historial del repositorio es de 2026.
     year: "2026",
     description:
-      "Aplicación móvil para controlar el álbum de figuritas del Mundial 2026: qué figuritas ya están pegadas, cuáles faltan y cuántas repetidas hay para intercambiar.",
+      "FiguSwap es una aplicación móvil para controlar el álbum de figuritas del Mundial 2026: qué figuritas ya están pegadas, cuáles faltan y cuántas repetidas hay para intercambiar. Guarda todo en el dispositivo, así que funciona sin conexión.",
+    problem:
+      "Con el álbum en papel o en listas sueltas cuesta saber qué falta y qué se puede cambiar. La app muestra el progreso al instante y arma la lista para compartir en un toque.",
     highlights: [
-      "Progreso total del álbum y por selección",
-      "Marcado rápido de obtenidas y faltantes",
-      "Contador de repetidas para los intercambios",
-      "Funciona sin conexión: guarda los datos en el dispositivo",
+      "Progreso total del álbum y por selección, con la bandera de cada país",
+      "Marcado rápido de figuritas obtenidas y faltantes",
+      "Contador de repetidas: solo deja sumar figuritas que ya están en el álbum",
+      "Búsqueda rápida por código de país y número, por ejemplo ARG 10",
+      "Copia o comparte la lista de faltantes y de repetidas, con banderas, desde el menú del celular",
+      "Modo oscuro que se recuerda entre sesiones",
+      "Funciona sin conexión: los datos se guardan en el dispositivo",
+      "Navegación por pestañas: Colección, Repetidas, Buscar y Ajustes",
     ],
-    technologies: ["React Native", "Expo", "Expo Router", "TypeScript", "AsyncStorage"],
-    role: "COMPLETAR: tu rol en Figuritas Mundial 2026 (por ejemplo, diseño y desarrollo de la app).",
+    stats: [
+      { value: "48", label: "selecciones" },
+      { value: "994", label: "figuritas en el álbum" },
+      { value: "4", label: "pestañas de navegación" },
+    ],
+    technologies: ["React Native", "Expo", "Expo Router", "TypeScript", "AsyncStorage", "Expo Clipboard"],
     media: [
       {
         type: "image",
@@ -353,15 +365,15 @@ export const projects: Project[] = [
       {
         type: "image",
         src: "/projects/figuritas-mundial-2026/repetidas.jpg",
-        alt: "Pantalla de figuritas repetidas de la app",
+        alt: "Pantalla Mis Repetidas: total de figuritas para cambiar, botones para copiar y compartir la lista y selecciones con su bandera",
         caption: "Mis repetidas",
         orientation: "portrait",
       },
       {
         type: "image",
         src: "/projects/figuritas-mundial-2026/buscar.jpg",
-        alt: "Pantalla de búsqueda de figuritas de la app",
-        caption: "Buscar",
+        alt: "Pantalla de búsqueda rápida: casilleros para el código del país y el número de la figurita",
+        caption: "Búsqueda rápida",
         orientation: "portrait",
       },
     ],

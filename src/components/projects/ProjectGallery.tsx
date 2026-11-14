@@ -28,6 +28,7 @@ export function ProjectGallery({ projectTitle, projectSlug, media, variant = "ca
   const [index, setIndex] = useState(0);
   const [zoomed, setZoomed] = useState<ImageMedia | null>(null);
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const tabListRef = useRef<HTMLUListElement>(null);
 
   if (media.length === 0) return null;
 
@@ -110,7 +111,20 @@ export function ProjectGallery({ projectTitle, projectSlug, media, variant = "ca
   // ---------------------------------------------------------------------------
   const total = media.length;
   const current = media[index];
-  const go = (next: number) => setIndex((next + total) % total);
+  const go = (next: number) => {
+    const target = (next + total) % total;
+    setIndex(target);
+    // Desplaza la tira de pestañas para que la activa quede centrada y visible
+    const list = tabListRef.current;
+    const tab = list?.children[target] as HTMLElement | undefined;
+    if (list && tab) {
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      list.scrollTo({
+        left: tab.offsetLeft - (list.clientWidth - tab.offsetWidth) / 2,
+        behavior: reduceMotion ? "auto" : "smooth",
+      });
+    }
+  };
 
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key === "ArrowRight") {
@@ -170,13 +184,13 @@ export function ProjectGallery({ projectTitle, projectSlug, media, variant = "ca
           </button>
         )}
 
-        <ul className="flex min-w-0 flex-1 gap-2 overflow-x-auto py-1 [scrollbar-width:thin]">
+        <ul ref={tabListRef} className="relative flex min-w-0 flex-1 gap-2 overflow-x-auto py-1 [scrollbar-width:thin]">
           {media.map((item, i) => (
             <li key={`${item.type}-${item.caption}`} className="shrink-0">
               <button
                 type="button"
                 aria-current={i === index ? "true" : undefined}
-                onClick={() => setIndex(i)}
+                onClick={() => go(i)}
                 className={cn(
                   "rounded-full border-2 px-3 py-1.5 text-xs font-semibold whitespace-nowrap transition-colors",
                   i === index

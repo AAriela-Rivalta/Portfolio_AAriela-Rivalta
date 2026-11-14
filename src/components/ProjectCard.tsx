@@ -65,6 +65,24 @@ function FeaturedCard({ project, index, reverse }: { project: Project; index: nu
           <p className="mt-2 text-lg font-medium text-primary">{project.tagline}</p>
           <p className="mt-5 leading-relaxed text-muted">{project.description}</p>
 
+          {project.parts && project.parts.length > 0 && (
+            <div className="mt-6">
+              <p className="text-xs font-bold uppercase tracking-wider text-accent-text">Partes del proyecto</p>
+              <ol className="mt-3 grid gap-3">
+                {project.parts.map((part, i) => (
+                  <li key={part.name} className="rounded-2xl border-2 border-ink bg-background p-4">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-muted">
+                      <span className="font-display font-bold text-accent-text">{formatIndex(i + 1)}</span> ·{" "}
+                      {part.kind}
+                    </p>
+                    <p className="mt-1 font-display text-lg font-bold leading-snug">{part.name}</p>
+                    <p className="mt-1 text-sm leading-relaxed text-muted">{part.description}</p>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          )}
+
           {project.problem && (
             <div className="mt-6 rounded-2xl border-l-4 border-accent bg-background px-4 py-3">
               <p className="text-xs font-bold uppercase tracking-wider text-accent-text">Qué resuelve</p>
@@ -199,12 +217,16 @@ function ProjectCredits({ project, className }: { project: Project; className?: 
   const showContext = !isPending(project.context) && !project.featured;
   return (
     <div className={cn("space-y-2 text-sm", className)}>
-      {!isPending(project.role) && (
-        <p>
-          <strong className="font-semibold">Mi rol:</strong> {project.role}
-        </p>
+      {project.role !== undefined && (
+        <>
+          {!isPending(project.role) && (
+            <p>
+              <strong className="font-semibold">Mi rol:</strong> {project.role}
+            </p>
+          )}
+          <PendingNote value={project.role} />
+        </>
       )}
-      <PendingNote value={project.role} />
       {project.team && (
         <p className="flex items-start gap-2 text-muted">
           <LuUsers aria-hidden="true" className="mt-0.5 size-4 shrink-0" />

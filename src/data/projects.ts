@@ -52,6 +52,14 @@ export type ProjectLink = {
 
 export type ProjectStat = { value: string; label: string };
 
+/** Una parte de un proyecto que tiene varias (por ejemplo, plataforma + automatización). */
+export type ProjectPart = {
+  /** Tipo de parte: "Plataforma web", "Automatización"... */
+  kind: string;
+  name: string;
+  description: string;
+};
+
 export type Project = {
   slug: string;
   title: string;
@@ -64,11 +72,13 @@ export type Project = {
   description: string;
   /** Qué problema resuelve (opcional). */
   problem?: string;
+  /** Partes del proyecto, si tiene más de una (opcional). */
+  parts?: ProjectPart[];
   highlights: string[];
   stats?: ProjectStat[];
   technologies: string[];
-  /** Tu rol en el proyecto. */
-  role: string;
+  /** Tu rol en el proyecto (opcional: si no lo ponés, no se muestra). */
+  role?: string;
   team?: string;
   media: ProjectMedia[];
   repoUrl: string;
@@ -121,32 +131,43 @@ export const projects: Project[] = [
       "SQLAlchemy",
       "SQLite",
     ],
-    role: "COMPLETAR: tu rol en CuidApp (por ejemplo, qué pantallas o módulos desarrollaste).",
     team: "Proyecto en equipo con Lara López y Estefanía Roggero.",
     media: [
       {
         type: "image",
-        src: "", // COMPLETAR: "/projects/cuidapp/dashboard.png"
-        alt: "Dashboard de CuidApp con gráficos de estadísticas de turnos y pacientes",
-        caption: "Dashboard con estadísticas",
+        src: "/projects/cuidapp/dashboard-paciente.png",
+        alt: "Panel del paciente en CuidApp: resumen de turnos próximos y estudios pendientes, accesos rápidos, notas personales, medicamentos y consultas virtuales",
+        caption: "Panel del paciente",
       },
       {
         type: "image",
-        src: "", // COMPLETAR: "/projects/cuidapp/turnos.png"
-        alt: "Agenda de turnos de CuidApp",
-        caption: "Gestión de turnos",
+        src: "/projects/cuidapp/turnos.png",
+        alt: "Listado de turnos programados del paciente con médico, especialidad, estado y opción para cancelar",
+        caption: "Turnos del paciente",
       },
       {
         type: "image",
-        src: "", // COMPLETAR: "/projects/cuidapp/historia-clinica.png"
-        alt: "Historia clínica de un paciente en CuidApp",
+        src: "/projects/cuidapp/historia-clinica.png",
+        alt: "Historial clínico del paciente con filtros por tipo y fecha y registros cronológicos de consultas y estudios",
         caption: "Historia clínica",
       },
       {
         type: "image",
-        src: "", // COMPLETAR: "/projects/cuidapp/facturacion.png"
-        alt: "Pantalla de facturación de CuidApp",
-        caption: "Facturación",
+        src: "/projects/cuidapp/estudios.png",
+        alt: "Estudios médicos del paciente con contadores por estado, filtros y una tarjeta por estudio",
+        caption: "Estudios médicos",
+      },
+      {
+        type: "image",
+        src: "/projects/cuidapp/reportes.png",
+        alt: "Reportes del administrador con indicadores del mes, filtros de búsqueda y tabla de turnos exportable a PDF",
+        caption: "Reportes (admin)",
+      },
+      {
+        type: "image",
+        src: "/projects/cuidapp/facturacion.png",
+        alt: "Listado de facturas del administrador con filtros, total, estado de pago y acciones por factura",
+        caption: "Facturación (admin)",
       },
     ],
     repoUrl: "https://github.com/AAriela-Rivalta/CuidApp-public",
@@ -155,40 +176,93 @@ export const projects: Project[] = [
   },
 
   // --------------------------------------------------------------------------
-  // PROYECTO DE AUTOMATIZACIÓN
+  // PLATAFORMA + AUTOMATIZACIÓN (un mismo proyecto con dos partes)
   // --------------------------------------------------------------------------
   {
-    slug: "recomendador-mascotas",
-    title: "Recomendador Inteligente de Mascotas",
-    tagline: "Automatización en Node.js para Refugio Conectado",
-    category: "Proyecto de automatización",
+    slug: "refugio-conectado",
+    title: "Refugio Conectado",
+    tagline: "Plataforma de adopción responsable con un recomendador de mascotas con IA",
+    category: "Plataforma web + automatización",
     featured: true,
-    context: "Proyecto académico · Refugio Conectado",
+    context: "Proyecto académico",
     year: "2026",
     description:
-      "Automatización que recomienda mascotas en adopción según el perfil de cada adoptante. Combina un motor de reglas explicable con un ranking opcional con IA (Groq). Si la IA no está disponible, el proceso sigue funcionando por reglas y lo informa.",
+      "Plataforma web para gestionar refugios de animales y acompañar la adopción responsable. Conecta a adoptantes, donantes y voluntarios con una o varias sedes, y le da a cada refugio un panel para administrar mascotas, solicitudes y el seguimiento posterior.",
+    parts: [
+      {
+        kind: "Plataforma web",
+        name: "Refugio Conectado",
+        description:
+          "Catálogo, adopciones, seguimiento post-adopción y un panel por sede. React y Tailwind en el frontend, Express y MySQL en el backend.",
+      },
+      {
+        kind: "Automatización",
+        name: "Recomendador Inteligente de Mascotas",
+        description:
+          "El recomendador como herramienta independiente en Node.js: procesa perfiles por lotes o conversando con Luna y genera informes en Markdown y JSON.",
+      },
+    ],
     problem:
-      "Recomendar una mascota a cada persona implicaba leer su perfil, revisar una por una las mascotas del refugio y descartar las que no pueden convivir con su familia.",
+      "Encontrar la mascota adecuada implicaba revisar una por una las del refugio y descartar las que no pueden convivir con cada familia. El recomendador lo resuelve a partir del perfil de la persona.",
     highlights: [
-      "Motor de reglas explicable: cada recomendación dice por qué encaja y qué tener en cuenta",
-      "Restricciones de convivencia obligatorias: niños, otras mascotas, especie y disponibilidad",
-      "Ranking opcional con IA (Groq), validado y con respaldo automático por reglas",
-      "Informes en Markdown para leer y en JSON para integrar con otros sistemas",
-      "Modo conversación con Luna, la asistente, en la terminal",
+      "Catálogo de mascotas con búsqueda, filtros, ficha e historial médico",
+      "Solicitudes de adopción y seguimiento post-adopción",
+      "Varias sedes: selector con mapa y datos separados por refugio",
+      "Panel de cada sede con métricas, gráficos y alertas de urgencia",
+      "Perdidos y encontrados, novedades, donaciones y voluntariado",
+      "Luna en la web: conversa con la persona y la IA ordena y explica las mascotas compatibles",
+      "Recomendador independiente: motor de reglas explicable, con ranking opcional por IA (Groq) y respaldo automático",
+      "Informes en Markdown y JSON, por lotes o conversando desde la terminal",
     ],
     stats: [
-      { value: "29", label: "pruebas automáticas" },
-      { value: "2", label: "modos: por lotes y conversación" },
-      { value: "8", label: "criterios del perfil del adoptante" },
+      { value: "3", label: "sedes de demostración en Córdoba" },
+      { value: "29", label: "pruebas automáticas del recomendador" },
+      { value: "2", label: "modos del recomendador: lotes y conversación" },
     ],
-    technologies: ["Node.js", "JavaScript", "Groq (IA)", "JSON", "Markdown", "node:test"],
-    role: "COMPLETAR: tu rol en el Recomendador (por ejemplo, qué parte del motor, las pruebas o el modo conversación desarrollaste).",
+    technologies: [
+      "React 18",
+      "Vite",
+      "Tailwind CSS",
+      "Zustand",
+      "Leaflet",
+      "Recharts",
+      "Node.js",
+      "Express",
+      "MySQL",
+      "JWT",
+      "Groq (IA)",
+      "node:test",
+    ],
     team: "Proyecto en equipo con Lara López y Estefanía Roggero.",
     media: [
       {
+        type: "image",
+        src: "/projects/refugio-conectado/luna-recomendador.png",
+        alt: "Asistente de adopción con IA: chat con Luna, que pregunta por la vivienda y preferencias, con respuestas sugeridas y un panel donde aparecen las recomendaciones",
+        caption: "Luna, el recomendador con IA",
+      },
+      {
+        type: "image",
+        src: "/projects/refugio-conectado/mascotas.png",
+        alt: "Catálogo de mascotas de una sede con búsqueda, filtros por tamaño, sexo, energía y compatibilidad con niños, y tarjetas de mascotas disponibles",
+        caption: "Catálogo de mascotas",
+      },
+      {
+        type: "image",
+        src: "/projects/refugio-conectado/solicitudes.png",
+        alt: "Solicitudes de adopción de una persona adoptante, aprobadas, con acceso al seguimiento post-adopción de cada mascota",
+        caption: "Mis solicitudes",
+      },
+      {
+        type: "image",
+        src: "/projects/refugio-conectado/mapa-sedes.png",
+        alt: "Selector de refugio con un mapa de la provincia de Córdoba y un marcador por cada sede que usa la plataforma",
+        caption: "Mapa de sedes",
+      },
+      {
         type: "terminal",
         title: "npm run lote",
-        caption: "Modo por lotes: salida real del motor, sin clave de IA",
+        caption: "Recomendador independiente, modo por lotes: salida real del motor, sin clave de IA",
         lines: [
           { text: "$ npm run lote", tone: "command" },
           { text: "🐾 Recomendador Inteligente de Mascotas — modo por lotes", tone: "default" },
@@ -208,7 +282,7 @@ export const projects: Project[] = [
       {
         type: "terminal",
         title: "npm run chat -- --sin-ia",
-        caption: "Modo conversación con Luna, solo con reglas",
+        caption: "Recomendador independiente, modo conversación con Luna, solo con reglas",
         lines: [
           { text: "$ npm run chat -- --sin-ia", tone: "command" },
           {
@@ -231,24 +305,19 @@ export const projects: Project[] = [
           { text: "   1. Michi — gato, 4 años, pequeño · 100% compatible", tone: "success" },
         ],
       },
-      // Podés sumar capturas, por ejemplo de Luna en Refugio Conectado:
-      // { type: "image", src: "/projects/recomendador-mascotas/luna.png", alt: "...", caption: "..." },
     ],
-    repoUrl: "https://github.com/EstefaniaRoggero/Recomendador-Inteligente-de-mascotas",
-    // Sin demo web: es una herramienta de línea de comandos.
+    // Repositorio de la plataforma; el del recomendador va en extraLinks.
+    repoUrl: "https://github.com/EstefaniaRoggero/Refugio-Conectado",
+    demoUrl: "https://refugio-conectado.vercel.app",
     extraLinks: [
       {
-        label: "Plataforma completa: Refugio Conectado",
-        href: "https://github.com/EstefaniaRoggero/Refugio-Conectado",
+        label: "Repositorio del Recomendador (automatización)",
+        href: "https://github.com/EstefaniaRoggero/Recomendador-Inteligente-de-mascotas",
         kind: "repo",
       },
-      {
-        label: "Refugio Conectado en vivo",
-        href: "https://refugio-conectado.vercel.app",
-        kind: "demo",
-      },
     ],
-    note: "Versión independiente del recomendador de Refugio Conectado. Usa datos ficticios.",
+    //   = espacio que no se corta, para que "©" no quede solo al final de una línea
+    note: "Versiones públicas con datos ficticios. Mapa: © colaboradores de OpenStreetMap.",
   },
 
   // --------------------------------------------------------------------------
